@@ -1,3 +1,10 @@
+/*
+ * A program that calculates permutations of a string of integers
+ * with a depth of min = 1 and max = 8
+ * The user is prompted to input a depth and the output is printed 
+ * to stdout
+ * Brute force algorithm that should be improved!
+ */
 #include <iostream>
 using namespace std;
 
