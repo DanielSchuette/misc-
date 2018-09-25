@@ -1,20 +1,21 @@
 #include <stdio.h>
+
 #define FAHRENHEIT_FACTOR (5.0/9.0)
+#define START   0
+#define END     300
+#define STEP    20
 
 /* function declarations */
 float fahrenheit(float x);
 
 int main() {
     /* define integer type counter variables */
-    float start, end, step, current;
-    start = 0.0;
-    end = 300.0;
-    step = 20.0;
-    current = start;
+    float current;
+    current = START;
 
-    while (current <= end) {
+    while (current <= END) {
         printf("%3.0f %6.1f\n", current, fahrenheit(current));
-        current += step;
+        current += STEP;
     }
     return 0;
 }
