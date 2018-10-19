@@ -1,3 +1,8 @@
+/*
+ * GTK+ example
+ * compile with:
+ * gcc `pkg-config --cflags gtk+-2.0` -o example mygtk.c `pkg-config --libs gtk+-2.0`
+ */
 #include <gtk/gtk.h>
 
 int main(int argc, char *argv[])
