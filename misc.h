@@ -7,4 +7,4 @@
 /* function declarations */
 void swap(int *, int *);
 
-#endif
+#endif /* _MISC_H_ */
