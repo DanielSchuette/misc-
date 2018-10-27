@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
 {
     /* declare/initialize variables */
     int amount;
+    int remainder;
     int dollar = 0;
     int quarter = 0;
     int dime = 0;
@@ -32,24 +33,12 @@ int main(int argc, char *argv[])
     }
 
     /* calculate change */
-    while (amount > 0) {
-        if (amount >= DOLLAR) {
-            amount -= DOLLAR;
-            dollar++;
-        } else if (amount >= QUARTER) {
-            amount -= QUARTER;
-            quarter++;
-        } else if (amount >= DIME) {
-            amount -= DIME;
-            dime++;
-        } else if (amount >= NICKEL) {
-            amount -= NICKEL;
-            nickel++;
-        } else if (amount >= PENNY) {
-            amount -= PENNY;
-            penny++;
-        }
-    }
+    dollar = amount / DOLLAR;
+    remainder = amount % DOLLAR;
+    quarter = remainder / QUARTER;
+    remainder = remainder % QUARTER;
+    dime = remainder / DIME;
+    penny = remainder % DIME;
     printf("you get %d dollars, %d quarters, %d dimes, %d nickel, and %d pennies\n",
             dollar, quarter, dime, nickel, penny);
     return 0;
