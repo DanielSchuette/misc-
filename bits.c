@@ -1,3 +1,4 @@
+/* bits.c demonstrates bit masking */
 #include <stdio.h>
 #define TEST_NUMBER 17
 
