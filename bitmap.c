@@ -10,9 +10,9 @@
 #define MAX_FIELD_NUM       ((MAX_BITMAP_SIZE)/8)
 
 /* in an actual implementation, move these to header */
-void set_bit(unsigned char *, unsigned char, long);
-unsigned char get_bit(unsigned char *, long);
-void print_bits(unsigned char *, long);
+static void set_bit(unsigned char *, unsigned char, long);
+static unsigned char get_bit(const unsigned char *, long);
+static void print_bits(const unsigned char *, long);
 
 /* global bitmap */
 unsigned char *bitmap;
@@ -35,22 +35,32 @@ int main(int argc, char **argv)
 
     /* set all entries to one */
     for (int i = 0; i < MAX_BITMAP_SIZE; i++) {
-        set_bit(bitmap, 0, i);
-    }
-    print_bits(bitmap, MAX_FIELD_NUM);
-
-    /* set all entries to one */
-    for (int i = 0; i < MAX_BITMAP_SIZE; i++) {
         set_bit(bitmap, 1, i);
     }
+    printf("expect all bit fields to be on:\n");
     print_bits(bitmap, MAX_FIELD_NUM);
 
-    /* 
-     * TODO: turning off bits doesn't
-     * work yet (see below).
-     */
-    set_bit(bitmap, 0, 43);
+    /* set all entries to zero */
+    for (int i = 0; i < MAX_BITMAP_SIZE; i++) {
+        set_bit(bitmap, 0, i);
+    }
+    printf("expect all bit fields to be off:\n");
     print_bits(bitmap, MAX_FIELD_NUM);
+
+    /* set single entries to one (zero-indexed) */
+    set_bit(bitmap, 1, 0);
+    set_bit(bitmap, 1, 8);
+    set_bit(bitmap, 1, 37);
+    set_bit(bitmap, 1, MAX_BITMAP_SIZE-1);
+    print_bits(bitmap, MAX_FIELD_NUM);
+
+    /* check if bits 1, 9, 80 are on */
+    printf("expect bits 1, 9, 38, 80 to be on:\n");
+    for (int i = 0; i < MAX_BITMAP_SIZE; i++) {
+        unsigned char bit;
+        if ((bit = get_bit(bitmap, i)) != 0)
+            printf("%d: %d\n", i, bit);
+    }
 
     return 0;
 }
@@ -63,26 +73,22 @@ void set_bit(unsigned char *bitmap,
 
     int idx;                    /* index into the bitmap */
     int pos;                    /* position in bitmap elem */
-    int mask;                   /* holds mask for bit shifting */
+    unsigned char mask = 1;     /* holds mask for bit shifting */
     int bits_per_field = 8;     /* change if necessary! */
-    /*
-     * TODO: determine mask with respect to
-     * user input, otherwise bits cannot be
-     * turned off.
-     */
-    if (val == 1)
-        mask = val;         /* user turns bit on */
-    else if (val == 0)
-        // TODO                 /* user turns bit off */
 
     idx = index / bits_per_field; 
     pos = index % bits_per_field;
-    mask <<= pos;
-    printf("mask=%d, index=%d, pos=%d\n", mask, idx, pos);
-    bitmap[idx] |= mask;
+
+    if (val == 1) {             /* user turns bit on */
+        mask <<= pos;
+        bitmap[idx] |= mask;
+    } else {                    /* user turns bit off */
+        mask <<= pos;
+        bitmap[idx] &= (~mask);
+    }
 }
 
-unsigned char get_bit(unsigned char *bitmap, long index)
+unsigned char get_bit(const unsigned char *bitmap, long index)
 {
     int idx;                /* index into the bitmap */
     int pos;                /* position in bitmap elem */
@@ -92,10 +98,16 @@ unsigned char get_bit(unsigned char *bitmap, long index)
     idx = index / bits_per_field;
     pos = index % bits_per_field;
     mask <<= pos;
-    return (unsigned char)(bitmap[idx] & mask);
+    /*
+     * Since the values of the bitmap itself are
+     * not shifted to not change the bitmap while
+     * getting values, one must be careful not to
+     * return values (0, 256].
+     */
+    return (unsigned char)(bitmap[idx] & mask) > 0 ? 1 : 0;
 }
 
-void print_bits(unsigned char *bitmap, long size)
+void print_bits(const unsigned char *bitmap, long size)
 {
     for (int i = 0; i < size; i++) {
         printf("%d ", bitmap[i]);
