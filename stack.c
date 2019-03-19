@@ -1,3 +1,4 @@
+/* stack.c implements a basic stack with push and pop ops */
 #include <stdio.h>
 #define  STACK_SIZE  2
 
